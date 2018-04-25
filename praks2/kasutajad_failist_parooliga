@@ -1,0 +1,9 @@
+#!/bin/bash
+while IFS= read -r line
+do
+	IFS=: read -r field1 field2 <<-EOI
+	$line
+	EOI
+	useradd -m "$field1"
+	echo "$field1:$field2" | chpasswd
+done < $1
