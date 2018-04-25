@@ -1,5 +1,5 @@
 #!/bin/bash
 while read line
 do
-	echo $line
+	useradd -m $line
 done < $1
