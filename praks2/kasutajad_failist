@@ -1,5 +1,5 @@
 #!/bin/bash
 while read line
 do
-	useradd -m $line
+	/bin/bash /root/rsha/praks2/lisa_kasutaja $line
 done < $1
