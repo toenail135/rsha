@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+#Kasutaja loomine
+while read line
+do
+	kasutaja=$line
+	parool=$(pwgen -s 8 1)
+	echo "$kasutaja parooliks määratakse $parool"
+	useradd -m -s /bin/bash $kasutaja
+	echo "$kasutaja:$parool" | chpasswd
+done < $1
