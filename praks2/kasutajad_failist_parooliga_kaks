@@ -1,0 +1,8 @@
+#!/bin/bash
+andmed=$(paste -d: $1 $2)
+for rida in $(paste -d: $1 $2)
+do
+	kasutaja=$(echo $rida | awk -F":" '{print $1}')
+	useradd -m -s /bin/bash $kasutaja
+	echo $rida | chpasswd
+done
