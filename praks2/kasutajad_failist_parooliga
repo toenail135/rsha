@@ -4,6 +4,6 @@ do
 	IFS=: read -r field1 field2 <<-EOI
 	$line
 	EOI
-	useradd -m "$field1"
+	useradd -m -s /bin/bash "$field1"
 	echo "$field1:$field2" | chpasswd
 done < $1
