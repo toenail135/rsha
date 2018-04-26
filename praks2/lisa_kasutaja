@@ -2,4 +2,4 @@
 #
 #Kasutaja loomine
 kasutajanimi=$1
-useradd -m -s /bin/bash $kasutajanimi
+useradd -m $kasutajanimi
