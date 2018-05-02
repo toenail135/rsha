@@ -1,0 +1,7 @@
+#!/bin/bash
+if  dpkg-query -W -f='${Status}' phpmyadmin | grep -c "ok installed"
+then
+	echo "phpMyAdmin on juba paigaldatud"
+	else
+apt-get --assume-yes install phpmyadmin
+fi
