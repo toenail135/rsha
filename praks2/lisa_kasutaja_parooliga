@@ -8,4 +8,5 @@ do
 	echo "$kasutaja parooliks määratakse $parool"
 	useradd -m -s /bin/bash $kasutaja
 	echo "$kasutaja:$parool" | chpasswd
+	echo "$kasutaja:$parool" >>  "genkasutajaparool"
 done < $1
