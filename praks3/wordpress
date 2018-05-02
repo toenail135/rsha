@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 if  dpkg-query -W -f='${Status}' apache2 mysql-server php7.0 libapache2-mod-php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-opcache php7.0-readline | grep -c "ok installed"
 then
 echo "Andmebaasi nimi: "
@@ -10,9 +10,8 @@ read dbpass
 curl -O https://wordpress.org/latest.tar.gz
 tar -zxvf latest.tar.gz
 cd wordpress
-cp -rf . ..
-cd ..
-rm -R wordpress
+cp -rf . /var/www/html/wordpress
+cd /var/www/html/wordpress
 cp wp-config-sample.php wp-config.php
 perl -pi -e "s/database_name_here/$dbname/g" wp-config.php
 perl -pi -e "s/username_here/$dbuser/g" wp-config.php
@@ -29,8 +28,6 @@ perl -i -pe'
 
 mkdir wp-content/uploads
 chmod 775 wp-content/uploads
-echo "Cleaning..."
-rm latest.tar.gz
 echo "Paigaldus on valmis!"
 else
 	echo "Paigalda enne vajalikud paketid!"
