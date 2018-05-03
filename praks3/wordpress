@@ -7,6 +7,10 @@ echo "Andmebaasi kasutaja: "
 read dbuser
 echo "Andmebaasi parool: "
 read dbpass
+echo "CREATE USER 'wpuser'@'localhost' IDENTIFIED BY 'qwerty';" | mysql -u root -pqwerty
+echo "CREATE DATABASE wp_database;" | mysql -u root -pqwerty
+echo "GRANT ALL ON wp_database.* TO wpuser@localhost;" | mysql -u root -pqwerty
+echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
 curl -O https://wordpress.org/latest.tar.gz
 tar -zxvf latest.tar.gz
 cd wordpress
