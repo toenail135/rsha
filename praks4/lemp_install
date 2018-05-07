@@ -21,7 +21,8 @@ else
         systemctl reload nginx.service
         sed -i 's/cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.0/fpm/php.ini
         systemctl reload php7.0-fpm.service
-        curl -O https://wordpress.org/latest.tar.gz
+        wget https://wordpress.org/latest.tar.gz
+        tar -xzvf latest.tar.gz
         echo "CREATE USER 'wpuser'@'localhost' IDENTIFIED BY 'qwerty';" | mysql -u root -pqwerty
         echo "CREATE DATABASE wp_database;" | mysql -u root -pqwerty
         echo "GRANT ALL ON wp_database.* TO wpuser@localhost;" | mysql -u root -pqwerty
