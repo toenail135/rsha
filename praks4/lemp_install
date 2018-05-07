@@ -1,0 +1,51 @@
+#!/bin/bash
+if dpkg-query -W -f='${Status}' nginx php-fpm7.0 php-mysql-community-client mysql-community-server php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-readline
+then
+        echo "LAMP stack koos phpMyAdmini ja Wordpressiga on juba paigaldatud."
+else
+        echo "Andmebaasi nimi: "
+        read dbname
+        echo "Andmebaasi kasutaja: "
+        read dbuser
+        echo "Andmebaasi parool: "
+        read dbpass
+        apt-get -y install nginx
+        cd /tmp
+        wget https://dev.mysql.com/get/mysql-apt-config_0.8.9-1_all.deb
+        dpkg -i mysql-apt-config_0.8.9-1_all.deb
+        apt-get update
+        apt-get -y install mysql-community-client mysql-community-server
+        mysql_secure_installation
+        apt-get -y install php7.0-fpm php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-readline
+        rm /etc/nginx/sites-available/default
+        wget https://raw.githubusercontent.com/toenail135/rsha/master/praks4/default -P /etc/nginx/sites-available/
+        systemctl reload nginx.service
+        sed -i 's/cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.0/fpm/php.ini
+        systemctl reload php7.0-fpm.service
+        curl -O https://wordpress.org/latest.tar.gz
+        echo "CREATE USER 'wpuser'@'localhost' IDENTIFIED BY 'qwerty';" | mysql -u root -pqwerty
+        echo "CREATE DATABASE wp_database;" | mysql -u root -pqwerty
+        echo "GRANT ALL ON wp_database.* TO wpuser@localhost;" | mysql -u root -pqwerty
+        echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+        cd wordpress
+        cp -rf . /var/www/html/wordpress
+        cd /var/www/html/wordpress
+        cp wp-config-sample.php wp-config.php
+        perl -pi -e "s/database_name_here/$dbname/g" wp-config.php
+        perl -pi -e "s/username_here/$dbuser/g" wp-config.php
+        perl -pi -e "s/password_here/$dbpass/g" wp-config.php
+        perl -i -pe'
+        BEGIN {
+                @chars = ("a" .. "z", "A" .. "Z", 0 .. 9);
+                push @chars, split //, "!@#$%^&*()-_ []{}<>~\`+=,.;:/?|";
+                sub salt { join "", map $chars[ rand @chars ], 1 .. 64 }
+                }
+                s/put your unique phrase here/salt()/ge
+        ' wp-config.php
+        mkdir wp-content/uploads
+        chmod 775 wp-content/uploads
+        apt-get -y install phpmyadmin
+        ln -s /usr/share/phpmyadmin/ /var/www/html/phpmyadmin
+        echo "Paigaldus on valmis!"
+fi
+
