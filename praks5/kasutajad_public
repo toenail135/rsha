@@ -1,0 +1,19 @@
+#!/bin/bash
+sed -i 's/public_html/public/g' /etc/apache2/mods-available/userdir.conf
+a2enmod userdir
+service apache2 restart
+
+kasutajanimi=$1
+owner=$(ls -ld /home/$kasutajanimi/public | awk '{ print $3 }')
+if [ -d /home/$kasutajanimi/public ]; then
+	echo "Kasutaja koos kaustaga on juba loodud"
+	if "$owner"  != "$kasutajanimi"
+	 then chown -R $kasutajanimi /home/$kasutajanimi/public
+	fi
+else
+	useradd -m -s /bin/bash $kasutajanimi
+	mkdir /home/$kasutajanimi/public
+	if "$owner" != "$kasutajanimi"
+	 then chown -R $kasutajanimi /home/$kasutajanimi/public
+	fi
+fi
