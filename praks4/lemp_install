@@ -23,9 +23,9 @@ else
         systemctl reload php7.0-fpm.service
         wget https://wordpress.org/latest.tar.gz
         tar -xzvf latest.tar.gz
-        echo "CREATE USER 'wpuser'@'localhost' IDENTIFIED BY 'qwerty';" | mysql -u root -pqwerty
-        echo "CREATE DATABASE wp_database;" | mysql -u root -pqwerty
-        echo "GRANT ALL ON wp_database.* TO wpuser@localhost;" | mysql -u root -pqwerty
+        echo "CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$dbpass';" | mysql -u root -pqwerty
+        echo "CREATE DATABASE $dbname;" | mysql -u root -pqwerty
+        echo "GRANT ALL ON $dbname.* TO $dbuser@localhost;" | mysql -u root -pqwerty
         echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
         cd wordpress
         cp -rf . /var/www/html/wordpress
