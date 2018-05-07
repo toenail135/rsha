@@ -15,7 +15,6 @@ else
         dpkg -i mysql-apt-config_0.8.9-1_all.deb
         apt-get update
         apt-get -y install mysql-community-client mysql-community-server
-        mysql_secure_installation
         apt-get -y install php7.0-fpm php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-readline
         rm /etc/nginx/sites-available/default
         wget https://raw.githubusercontent.com/toenail135/rsha/master/praks4/default -P /etc/nginx/sites-available/
