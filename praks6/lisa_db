@@ -1,0 +1,16 @@
+#!/bin/bash
+echo "Andmebaasi kasutaja: "
+        read dbuser
+        parool=$(pwgen -s 8 1)
+	dbname=""$dbuser"_test"
+	echo "CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$parool';" | mysql -u root -pqwerty
+	echo "CREATE DATABASE "$dbname";" | mysql -u root -pqwerty
+	echo "GRANT ALL ON $dbname.* TO $dbuser@localhost;" | mysql -u root -pqwerty
+	echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+if	[ -d /home/$dbuser/ ]; then
+
+	echo "$dbuser:$parool" >> /home/$dbuser/.my.cnf
+else
+	mkdir /home/$dbuser/
+	echo "$dbuser:$parool" >> /home/$dbuser.my.cnf
+fi
