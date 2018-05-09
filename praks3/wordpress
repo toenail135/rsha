@@ -1,26 +1,35 @@
 #!/bin/bash
+#Uuritakse, kas LAMP stack on juba varasemalt paigaldatud
 if  dpkg-query -W -f='${Status}' apache2 mysql-server php7.0 libapache2-mod-php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-opcache php7.0-readline | grep -c "ok installed"
+#Kui on mindakse edasi
 then
+#Küsitakse andmebaasi nimi, kasutaja ja parool
 echo "Andmebaasi nimi: "
 read dbname
 echo "Andmebaasi kasutaja: "
 read dbuser
 echo "Andmebaasi parool: "
 read dbpass
+#Küsitud andmete abil loodakse wordpressi jaoks mysql kasutaja, andmebaas ja määratakse andmebaasile õigused
 echo "CREATE USER 'wpuser'@'localhost' IDENTIFIED BY 'qwerty';" | mysql -u root -pqwerty
 echo "CREATE DATABASE wp_database;" | mysql -u root -pqwerty
 echo "GRANT ALL ON wp_database.* TO wpuser@localhost;" | mysql -u root -pqwerty
 echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+#Laeme alla wordpressi faili
 curl -O https://wordpress.org/latest.tar.gz
+#Pakime wordpressi faili lahti ja läheme selle sisse
 tar -zxvf latest.tar.gz
 cd wordpress
+#Kopeerime faili sisu /var/www/html/wordpress kausta ja läheme selle sisse
 cp -rf . /var/www/html/wordpress
 cd /var/www/html/wordpress
+#Kopeerime config faili
 cp wp-config-sample.php wp-config.php
+#Kirjutame varem küsitud andmed config faili sisse
 perl -pi -e "s/database_name_here/$dbname/g" wp-config.php
 perl -pi -e "s/username_here/$dbuser/g" wp-config.php
 perl -pi -e "s/password_here/$dbpass/g" wp-config.php
-
+#Genereeime saltid ja kirjutame config faili need
 perl -i -pe'
   BEGIN {
     @chars = ("a" .. "z", "A" .. "Z", 0 .. 9);
@@ -29,10 +38,12 @@ perl -i -pe'
   }
   s/put your unique phrase here/salt()/ge
 ' wp-config.php
-
+#Loome üleslaadimiseks kausta ja määrame õigused sellele
 mkdir wp-content/uploads
 chmod 775 wp-content/uploads
+#Väljastame sõnumi
 echo "Paigaldus on valmis!"
 else
+	#Kui LAMP stack pole algselt paigaldatud väljastatakse sõnum, et need peaks enne paigaldama
 	echo "Paigalda enne vajalikud paketid!"
 fi
