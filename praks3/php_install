@@ -1,7 +1,10 @@
 #!/bin/bash
+#Uurime, kas php koos vajalike pakettidega on paigaldatud
 if  dpkg-query -W -f='${Status}' php7.0 libapache2-mod-php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-opcache php7.0-readline | grep -c "ok installed"
 then
+	#Kui on paigaldatud, väljastatakse sõnum
 	echo "PHP koos vajalike pakettidega on juba paigaldatud"
 	else
+#Kui mitte, paigaldatakse need
 apt-get --assume-yes install php7.0 libapache2-mod-php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-opcache php7.0-readline
 fi
