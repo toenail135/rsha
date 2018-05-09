@@ -1,9 +1,13 @@
 #!/bin/bash
+#Loeme määratud faili ridade järgi
 while IFS= read -r line
+#Määrame failist delimiteri abil field1 ja field2 mis on parool ja kasutajanimi
 do
 	IFS=: read -r field1 field2 <<-EOI
 	$line
 	EOI
+	#Loome kasutajad koos kooriku ja kodukaustaga
 	useradd -m -s /bin/bash "$field1"
+	#Määrame loodud kasutajale parooli
 	echo "$field1:$field2" | chpasswd
 done < $1
