@@ -1,8 +1,13 @@
 #!/bin/bash
+#Võtame kahest erinevast failist parooli ja kasutajanime, ning paneme delimiteri neile vahele
 andmed=$(paste -d: $1 $2)
+#Loeme loodud andmed muutujast ridade kaupa
 for rida in $(paste -d: $1 $2)
 do
+	#Määrame, et kasutaja on esimene pool muutujast, delimiteriks määrame :
 	kasutaja=$(echo $rida | awk -F":" '{print $1}')
+	#Loome kasutaja koos kodukausta ja koorikuga
 	useradd -m -s /bin/bash $kasutaja
+	#Määrame parooli
 	echo $rida | chpasswd
 done
