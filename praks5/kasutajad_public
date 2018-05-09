@@ -1,18 +1,27 @@
 #!/bin/bash
+#Määrame muutujaks kasutajanime
 kasutajanimi=$1
+#Määrame muutujaks määratud kausta omaniku
 owner=$(ls -ld /home/$kasutajanimi/public/ | awk '{print $3}')
+#Kui /home/$kasutajanimi/public kaust on juba varasemalt loodud väljastatakse sõnum
 if [ -d /home/$kasutajanimi/public ]; then
   echo "Antud kaust on juba varasemalt loodud"
+  #Kui kausta omanik ja kasutajanimi on võrdsed väljastatakse sõnum
   if [ "$owner" = "$kasutajanimi" ]; then
 	echo "Antud kaustale on juba korrektsed õigused antud."
+  #Kui kausta omanik pole võrne kasutajanimega, määratakse kausta omanikuks kasutajanimi
   else
   	chown -R $kasutajanimi /home/$kasutajanimi/public 
   fi
+#Kui /home/$kasutajanimi/public kaust pole varasemalt loodud loodakse muutuja nimeline kasutaja koos kooriku ja kodukaustaga
 else
 	useradd -m -s /bin/bash $kasutajanimi
+	#Kasutajale loodakse public kaust
   	mkdir /home/$kasutajanimi/public
+	#Kui kausta omanik ja kasutajanimi on võrdsed väljastatakse sõnum
   	if [ "$owner" = "$kasutajanimi" ]; then
 		echo "Õigused on juba korrektsed."
+	#Kui kausta omanik pole võrne kasutajanimega, määratakse kausta omanikuks kasutajanimi
   	else
   	chown -R $kasutajanimi /home/$kasutajanimi/public
   fi
