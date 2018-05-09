@@ -1,12 +1,17 @@
 #!/bin/bash
 #
-#Kasutaja loomine
+#Loeme ridade kaupa muutuja failist
 while read line
 do
 	kasutaja=$line
+	#Genereerime parooli
 	parool=$(pwgen -s 8 1)
+	#Väljastame parooli
 	echo "$kasutaja parooliks määratakse $parool"
+	#Loome kasutaja koos kodukausta ja koorikuga
 	useradd -m -s /bin/bash $kasutaja
+	#Määrame parooli
 	echo "$kasutaja:$parool" | chpasswd
+	#Kirjutame kasutajanime ja parooli faili
 	echo "$kasutaja:$parool" >>  "genkasutajaparool"
 done < $1
