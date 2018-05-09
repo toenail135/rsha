@@ -1,8 +1,14 @@
 #!/bin/bash
+#userdir.conf failis muudetakse public_html public peale
 sed -i 's/public_html/public/g' /etc/apache2/mods-available/userdir.conf
+#Käivitatakse userdir conf fail
 a2enmod userdir
+#Taaskäivitame apache2
 service apache2 restart
 
+#Määratakse muutuja
 kasutajanimi=$1
+#Loodakse muutuja nimeline kasutaja koos kodukausta ja koorikuga
 useradd -m -s /bin/bash $kasutajanimi
+#Loodakse kasutajale public kaust
 mkdir /home/$kasutajanimi/public
