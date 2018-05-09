@@ -1,7 +1,10 @@
 #!/bin/bash
+#Uurime, kas apache2 on paigaldatud
 if  dpkg-query -W -f='${Status}' apache2 | grep -c "ok installed"
+#Kui apache2 on paigaldatud väljastatakse sõnum
 then
 	echo "Apache on juba paigaldatud"
 	else
+		#Kui mitte, paigaldatakse apache2
 		apt-get --assume-yes install apache2
 fi
