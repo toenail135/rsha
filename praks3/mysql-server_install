@@ -1,8 +1,12 @@
 #!/bin/bash
+#Uurime, kas mysql-server on paigaldatud
 if  dpkg-query -W -f='${Status}' mysql-server | grep -c "ok installed"
 then
+	#Kui mysql-server on paigaldatud väljastatakse sõnum
 	echo "Mysql-server on juba paigaldatud"
 	else
+		#Kui mitte, paigaldatakse see
 		apt-get --assume-yes install mysql-server
+		#Käivitame mysql paigalduse
 		mysql_secure_installation
 fi
