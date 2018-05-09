@@ -1,39 +1,56 @@
 #!/bin/bash
+#Kontrollitakse kas LEMP stack koos phpmyadminiga on varasemalt juba paigaldatud.
 if dpkg-query -W -f='${Status}' nginx php-fpm7.0 php-mysql-community-client mysql-community-server php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-readline
 then
+        #Kui on väljastatakse sõnum
         echo "LAMP stack koos phpMyAdmini ja Wordpressiga on juba paigaldatud."
 else
+        #Kui mitte, mindakse paigaldusega edasi ja küsitakse andmebaasi jaoks nimi, parool ja kasutaja.
         echo "Andmebaasi nimi: "
         read dbname
         echo "Andmebaasi kasutaja: "
         read dbuser
         echo "Andmebaasi parool: "
         read dbpass
+        #Paigaldatakse nginx
         apt-get -y install nginx
+        #Mindakse /tmp kausta ja laetakse alla mysqli jaoks vajalik fail
         cd /tmp
         wget https://dev.mysql.com/get/mysql-apt-config_0.8.9-1_all.deb
+        #Käivitatakse fail, ning uuendatakse repositooriumid mysql serveri ja kliendi jaoks.
         dpkg -i mysql-apt-config_0.8.9-1_all.deb
+        #Uuendame repositooriumid ja paigaldame mysql serveri ja kliendi
         apt-get update
         apt-get -y install mysql-community-client mysql-community-server
         apt-get -y install php7.0-fpm php7.0 php7.0-mysql php-common php7.0-cli php7.0-common php7.0-json php7.0-readline
+        #Kuna sed abil ei osatud nginx faili muuta, kustutati see ja laeti alla varasemalt korrektselt konfigureeritud fail.
         rm /etc/nginx/sites-available/default
         wget https://raw.githubusercontent.com/toenail135/rsha/master/praks4/default -P /etc/nginx/sites-available/
+        #Taaskäivitame nginxi
         systemctl reload nginx.service
+        #Muudame cgi.fix_pathinfo=1 pealt cgi.fix_pathinfo=0 peale php.ini failis
         sed -i 's/cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.0/fpm/php.ini
+        #Taaskäivitame php
         systemctl reload php7.0-fpm.service
+        #Laeme alla wordpressi ja pakime selle lahti
         wget https://wordpress.org/latest.tar.gz
         tar -xzvf latest.tar.gz
+        #Loome wordpressi jaoks kasutaja, andmebaasi ja määrame korrektsed õigused kasutajale
         echo "CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$dbpass';" | mysql -u root -pqwerty
         echo "CREATE DATABASE $dbname;" | mysql -u root -pqwerty
         echo "GRANT ALL ON $dbname.* TO $dbuser@localhost;" | mysql -u root -pqwerty
         echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+        #Läheme lahtipakitud wordpress kausta sisse ja kopeerime selle sisu /var/www/html/wordpress sisse
         cd wordpress
         cp -rf . /var/www/html/wordpress
+        #Liigume /var/www/html/wordpress kausta
         cd /var/www/html/wordpress
+        #Kopeerime wordpress config faili ja kirjutame sinna sisse kasutaja, andmebaasi ja parooli
         cp wp-config-sample.php wp-config.php
         perl -pi -e "s/database_name_here/$dbname/g" wp-config.php
         perl -pi -e "s/username_here/$dbuser/g" wp-config.php
         perl -pi -e "s/password_here/$dbpass/g" wp-config.php
+        #Genereerime saltid ja kirjutame wordpress config faili sisse
         perl -i -pe'
         BEGIN {
                 @chars = ("a" .. "z", "A" .. "Z", 0 .. 9);
@@ -42,10 +59,14 @@ else
                 }
                 s/put your unique phrase here/salt()/ge
         ' wp-config.php
+        #Loome üleslaadimiseks kausta ja määrame sellele õigused
         mkdir wp-content/uploads
         chmod 775 wp-content/uploads
+        #Laeme alla phpmyadmini ja paigaldame selle
         apt-get -y install phpmyadmin
+        #Loome symlinki, et phpmyadmini leht oleks aktiveeritud
         ln -s /usr/share/phpmyadmin/ /var/www/html/phpmyadmin
+        #Kui paigaldus on lõppenud, väljastatakse sõnum
         echo "Paigaldus on valmis!"
 fi
 
