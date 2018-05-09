@@ -1,15 +1,21 @@
 #!/bin/bash
+#Küsitakse andmebaasi kasutaja
 echo "Andmebaasi kasutaja: "
         read dbuser
+	#Genereeritakse parool
         parool=$(pwgen -s 8 1)
+	#Määratakse "kasutajanimi" _test nimeline andmebaas
 	dbname=""$dbuser"_test"
+	#Loodakse kasutaja, andmebaas ja määratakse õigused
 	echo "CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$parool';" | mysql -u root -pqwerty
 	echo "CREATE DATABASE "$dbname";" | mysql -u root -pqwerty
 	echo "GRANT ALL ON $dbname.* TO $dbuser@localhost;" | mysql -u root -pqwerty
 	echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+	#Kui kasutajal on juba kodukaust olemas, kirjutatakse kasutajanimi ja parool kodukaustas olevasse .my.cnf faili
 if	[ -d /home/$dbuser/ ]; then
 
 	echo "$dbuser:$parool" >> /home/$dbuser/.my.cnf
+	#Kui kodukaust ei eksisteeri, loodakse see ja kirjutatakse kasutajanimi ja parool kodukaustas olevasse .my.cnf faili
 else
 	mkdir /home/$dbuser/
 	echo "$dbuser:$parool" >> /home/$dbuser.my.cnf
