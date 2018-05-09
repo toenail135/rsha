@@ -1,5 +1,7 @@
 #!/bin/bash
+#Loeme määratud faili ridade järgi
 while read line
+#Käivitab skripti lisa_kasutaja ja loob failis olevate nimedega kasutajad
 do
 	/bin/bash /root/rsha/praks2/lisa_kasutaja $line
 done < $1
