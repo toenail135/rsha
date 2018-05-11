@@ -14,5 +14,6 @@ do
 	echo "CREATE DATABASE "$dbname";" | mysql -u root -pqwerty
 	echo "GRANT ALL ON $dbname.* TO $kasutaja@localhost;" | mysql -u root -pqwerty
 	echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+	echo "$kasutaja:$parool" > /home/$kasutaja/.my.cnf
 	fi
 done
