@@ -1,0 +1,18 @@
+#!/bin/bash
+#Loome muutuja kasutajad
+kasutajad=$(ls /home)
+#Loeme muutuja kasutajad ridade kaupa
+for kasutaja in $kasutajad
+do
+	#Genereerime parooli
+	parool=$(pwgen -s 8 1)
+	#Loome kasutajate jaoks andmebaasi nime muutuja
+	dbname=""$kasutaja"_test"
+	#Kui kasutaja kodukaustas puudub .my.cnf fail, siis luuakse mysql kasutaja ja andmebaas, määratakse õigused ja parool.
+	if [ ! -f /home/$kasutaja/.my.cnf ]; then
+	echo "CREATE USER '$kasutaja'@'localhost' IDENTIFIED BY '$parool';" | mysql -u root -pqwerty
+	echo "CREATE DATABASE "$dbname";" | mysql -u root -pqwerty
+	echo "GRANT ALL ON $dbname.* TO $kasutaja@localhost;" | mysql -u root -pqwerty
+	echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+	fi
+done
