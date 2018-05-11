@@ -5,7 +5,7 @@ read dbuser
 #Tekitame andmebaasi nime muutuja
 dbname=""$dbuser"_test"
 #Tekitame aja muutuja
-aeg=$(date +"%Y-%m-%d-%H.%M")
+aeg=$(date +"%Y-%m-%d.%H-%M")
 #Tekitame parooli muutuja, mis võetakse .my.cnf failist
 passwd=$(cat /home/$dbuser/.my.cnf | awk -F":" '{print $2}')
 
