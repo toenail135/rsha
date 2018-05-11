@@ -1,0 +1,17 @@
+#!/bin/bash
+#Küsime kasutajalt andmebaasi kasutajanime, ning määrame andmebaasi nime
+echo "Andmebaasi kasutaja: "
+        read dbuser
+        parool=$(pwgen -s 8 1)
+	dbname=""$dbuser"_test"
+#Kui .my.cnf fail eksisteerib väljastame sõnumi
+if [ -f /home/$dbuser/.my.cnf ]; then
+	echo "Kasutajale on juba ´mysqli kasutaja, andmebaas, parool ja õigused määratud!"
+#Kui mitte, loome kasutaja, andmebaasi, määrame parooli ja määrame õigused.
+else	echo "CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$parool';" | mysql -u root -pqwerty
+        echo "CREATE DATABASE "$dbname";" | mysql -u root -pqwerty
+        echo "GRANT ALL ON $dbname.* TO $dbuser@localhost;" | mysql -u root -pqwerty
+        echo "FLUSH PRIVILEGES;" | mysql -u root -pqwerty
+#Kirjutame parooli kasutaja kodukaustas olevasse .my.cnf faili
+        echo "$dbuser:$parool" >> /home/$dbuser/.my.cnf
+fi
