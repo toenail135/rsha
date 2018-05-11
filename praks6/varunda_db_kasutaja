@@ -1,0 +1,19 @@
+#!/bin/bash
+#Sisestame andmebaasi kasutajanime ja tekitame muutuja
+echo "Sisesta andmebaasi kasutajanimi: "
+read dbuser
+#Tekitame andmebaasi nime muutuja
+dbname=""$dbuser"_test"
+#Tekitame aja muutuja
+aeg=$(date +"%Y-%m-%d-%H.%M")
+#Tekitame parooli muutuja, mis võetakse .my.cnf failist
+passwd=$(cat /home/$dbuser/.my.cnf | awk -F":" '{print $2}')
+
+#Kui /mysql_backup kaust on varasemalt loodud, luuakse varundusfail selle sisse
+if [ -d /mysql_backup ]; then
+	mysqldump -u $dbuser -p$passwd $dbname > /mysql_backup/$aeg.$dbname.backup.sql
+else
+#Kui mitte, luuakse mysql_backup fail root kausta ja siis kirjutatakse varundusfail selle sisse
+	mkdir /mysql_backup
+	mysqldump -u $dbuser -p$passwd $dbname > /mysql_backup/$aeg.$dbname.backup.sql
+fi
