@@ -1,0 +1,23 @@
+
+#!/bin/bash
+#Loome muutuja kasutajad
+kasutajad=$(ls /home)
+#Loeme muutuja kasutajad ridade kaupa
+for kasutaja in $kasutajad
+do
+        #Tekitame andmebaasi nime muutuja
+        dbname=""$kasutaja"_test"
+        #Tekitame aja muutuja
+        aeg=$(date +"%Y-%m-%d.%H-%M")
+        #Tekitame parooli muutuja, mis võetakse .my.cnf failist
+        passwd=$(cat /home/$kasutaja/.my.cnf | awk -F":" '{print $2}')
+
+        if [ -d /mysql_backup ]; then
+        mysqldump -u $kasutaja -p$passwd $dbname > /mysql_backup/$aeg.$dbname.backup.sql
+        else
+        #Kui mitte, luuakse mysql_backup fail root kausta ja siis kirjutatakse varundusfail selle sisse
+        mkdir /mysql_backup
+        mysqldump -u $dbuser -p$passwd $dbname > /mysql_backup/$aeg.$dbname.backup.sql
+        fi
+done
+
